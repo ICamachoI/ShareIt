@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ShareIt</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primero: #d30000;
+            --segundo: #fa8072;
+            --tercero: #800000;
+            --cuarto: #ca3433;
+            --quinto: #3c3c3c;
+            --sexto: #515151;
+            --septimo: #b5b5b5;
+        }
+
+        body {
+            background-color: var(--quinto);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        img {
+            height: 250px;
+            width: 300px;
+        }
+
+        #container {
+            background-color: var(--septimo);
+            width: 50vw;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px;
+            border-radius: 10px;
+        }
+
+        #login-form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+
+        #login-form > input {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        #login-form > button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: var(--primero);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #login-form > button:hover {
+            background-color: var(--segundo);
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="container">
+
+        <img src="img/ShareIt-Logo.png" alt="Logo" id="logo">
+
+        <h1 id="title">Bienvenido a ShareIt</h1>
+
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Ingresa tu nombre de usuario" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            if (username) {
+                localStorage.setItem('username', username);
+                window.location.href = '/chat.html';
+            }
+        });
+    </script>
+</body>
+</html>

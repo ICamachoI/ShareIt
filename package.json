@@ -1,0 +1,21 @@
+{
+  "name": "shareit",
+  "version": "1.0.0",
+  "description": "Chat en tiempo real",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "prueba": "node --watch ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Camacho",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.19.2",
+    "mongodb": "^6.6.2",
+    "mongoose": "^8.4.0",
+    "morgan": "1.10.0",
+    "mysql": "^2.18.1",
+    "socket.io": "4.7.5"
+  }
+}
