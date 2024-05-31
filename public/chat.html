@@ -68,7 +68,7 @@
                 const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
                 messages.insertAdjacentHTML('beforeend', item);
                 input.value = '';
-                imagePreview.style.display = 'none'; // Hide preview on submit
+                imagePreview.style.display = 'none';
                 scrollToBottom(); 
             } else if (imageInput.files.length > 0) {
                 const file = imageInput.files[0];
@@ -83,7 +83,7 @@
                     const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
                     messages.insertAdjacentHTML('beforeend', item);
                     imageInput.value = '';
-                    imagePreview.style.display = 'none'; // Hide preview on submit
+                    imagePreview.style.display = 'none';
                     scrollToBottom(); 
                 };
                 reader.readAsDataURL(file);
