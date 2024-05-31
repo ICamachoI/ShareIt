@@ -19,16 +19,27 @@
         const chatList = document.getElementById('chat-list');
         const newChatForm = document.getElementById('new-chat-form');
         const newChatInput = document.getElementById('new-chat-input');
+        const imageInput = document.getElementById('image-input');
     
         socket.on('chat message', (msg) => {
-            const item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
+            let item;
+            if (msg.image) {
+                item = `<li class="server-message"><strong>${msg.username}</strong>: <img src="${msg.image}" alt="Image"></li>`;
+            } else {
+                item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
+            }
             messages.insertAdjacentHTML('beforeend', item);
         });
     
         socket.on('chat history', (msgs) => {
             messages.innerHTML = '';
             msgs.forEach(msg => {
-                const item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
+                let item;
+                if (msg.image) {
+                    item = `<li class="server-message"><strong>${msg.username}</strong>: <img src="${msg.image}" alt="Image"></li>`;
+                } else {
+                    item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
+                }
                 messages.insertAdjacentHTML('beforeend', item);
             });
         });
@@ -54,6 +65,21 @@
                 const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
                 messages.insertAdjacentHTML('beforeend', item);
                 input.value = '';
+            } else if (imageInput.files.length > 0) {
+                const file = imageInput.files[0];
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const msg = {
+                        image: reader.result,
+                        username,
+                        chat: currentChat
+                    };
+                    socket.emit('chat message', msg);
+                    const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
+                    messages.insertAdjacentHTML('beforeend', item);
+                    imageInput.value = '';
+                };
+                reader.readAsDataURL(file);
             }
         });
     
@@ -168,6 +194,10 @@
             outline: 0;
         }
 
+        #image-input {
+            display: none;
+        }
+
         #messages {
             list-style-type: none;
             margin: 0;
@@ -253,6 +283,7 @@
         <ul id="messages"></ul>
         <form id="form">
             <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
+            <input type="file" id="image-input" accept="image/*">
             <button type="submit">Enviar</button>
         </form>
     </section>
