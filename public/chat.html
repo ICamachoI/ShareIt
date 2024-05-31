@@ -155,25 +155,35 @@
             background-color: var(--septimo);
             width: 80vw;
             margin-left: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            flex: 1;
+            overflow-y: auto;
         }
 
         #form {
-            bottom: 0;
             display: flex;
             height: 50px;
-            left: 0;
             padding: 5px;
-            position: absolute;
-            right: 0;
+            position: relative;
+        }
+
+        #form > input, #form > button, #image-label {
+            margin: 5px;
+            border-radius: 5px;
+            height: 30px;
         }
 
         #form > button {
             background: var(--primero);
             color: whitesmoke;
             border: 0;
-            margin: 5px;
-            border-radius: 5px;
-            height: 30px;
         }
 
         #form > button:hover {
@@ -182,12 +192,9 @@
         }
 
         #input {
-            border-radius: 5px;
-            border: 1px solid;
             flex: 1;
-            margin: 5px;
             padding: 0 8px;
-            height: 30px;
+            border: 1px solid;
         }
 
         #input:focus {
@@ -202,24 +209,12 @@
             background-color: var(--primero);
             color: whitesmoke;
             border: none;
-            margin: 5px;
-            border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
         }
 
         #image-label:hover {
             background-color: var(--segundo);
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages > li {
-            padding: 0.5rem 1rem;
         }
 
         .client-message {
@@ -281,6 +276,7 @@
             width: 20%;
             padding: 0 10px;
         }
+
     </style>
 
 </head>
