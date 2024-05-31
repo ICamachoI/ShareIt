@@ -198,6 +198,20 @@
             display: none;
         }
 
+        #image-label {
+            background-color: var(--primero);
+            color: whitesmoke;
+            border: none;
+            margin: 5px;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #image-label:hover {
+            background-color: var(--segundo);
+        }
+
         #messages {
             list-style-type: none;
             margin: 0;
@@ -283,6 +297,7 @@
         <ul id="messages"></ul>
         <form id="form">
             <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
+            <label for="image-input" id="image-label">Seleccionar imagen</label>
             <input type="file" id="image-input" accept="image/*">
             <button type="submit">Enviar</button>
         </form>
