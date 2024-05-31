@@ -20,6 +20,7 @@
         const newChatForm = document.getElementById('new-chat-form');
         const newChatInput = document.getElementById('new-chat-input');
         const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
     
         socket.on('chat message', (msg) => {
             let item;
@@ -67,6 +68,7 @@
                 const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
                 messages.insertAdjacentHTML('beforeend', item);
                 input.value = '';
+                imagePreview.style.display = 'none'; // Hide preview on submit
                 scrollToBottom(); 
             } else if (imageInput.files.length > 0) {
                 const file = imageInput.files[0];
@@ -81,9 +83,24 @@
                     const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
                     messages.insertAdjacentHTML('beforeend', item);
                     imageInput.value = '';
+                    imagePreview.style.display = 'none'; // Hide preview on submit
                     scrollToBottom(); 
                 };
                 reader.readAsDataURL(file);
+            }
+        });
+    
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    imagePreview.src = reader.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
             }
         });
     
@@ -120,7 +137,7 @@
         function scrollToBottom() {
             messages.scrollTop = messages.scrollHeight;
         }
-    </script>    
+    </script>        
     
     <style>
         * {
@@ -292,6 +309,13 @@
             padding: 0 10px;
         }
 
+        #image-preview {
+            display: none;
+            max-width: 300px;
+            max-height: 300px;
+            margin: 10px 0;
+        }
+
     </style>
 
 </head>
@@ -310,8 +334,10 @@
             <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
             <label for="image-input" id="image-label">Foto</label>
             <input type="file" id="image-input" accept="image/*">
+            <img id="image-preview" style="display: none; max-width: 100px; max-height: 100px; margin: 10px 0;">
             <button type="submit">Enviar</button>
         </form>
     </section>
+    
 </body>
 </html>
