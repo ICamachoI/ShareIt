@@ -84,16 +84,6 @@ io.on('connection', async (socket) => {
         }
     });
 
-    socket.on('delete chat', async (chatToDelete) => {
-        try {
-            await Chat.deleteOne({ name: chatToDelete });
-            await Message.deleteMany({ chat: chatToDelete });
-            const chats = await Chat.find().exec();
-            io.emit('update chats', chats.map(chat => chat.name));
-        } catch (error) {
-            console.error('Error al eliminar chat de la base de datos:', error);
-        }
-    });
 });
 
 app.use(logger('dev'));

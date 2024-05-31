@@ -36,11 +36,7 @@
         socket.on('update chats', (chats) => {
             chatList.innerHTML = '';
             chats.forEach(chat => {
-                const item = `
-                    <li data-chat="${chat}">
-                        ${chat}
-                        <button class="delete-chat">Eliminar</button>
-                    </li>`;
+                const item = `<li data-chat="${chat}">${chat}</li>`;
                 chatList.insertAdjacentHTML('beforeend', item);
             });
             highlightCurrentChat();
@@ -62,14 +58,10 @@
         });
     
         chatList.addEventListener('click', (e) => {
-            if (e.target.tagName === 'LI' || e.target.parentElement.tagName === 'LI') {
-                const chatElement = e.target.tagName === 'LI' ? e.target : e.target.parentElement;
-                currentChat = chatElement.dataset.chat;
+            if (e.target.tagName === 'LI') {
+                currentChat = e.target.dataset.chat;
                 socket.emit('join chat', currentChat);
                 highlightCurrentChat();
-            } else if (e.target.classList.contains('delete-chat')) {
-                const chatToDelete = e.target.parentElement.dataset.chat;
-                socket.emit('delete chat', chatToDelete);
             }
         });
     
@@ -214,22 +206,6 @@
             background-color: var(--septimo);
         }
 
-        #chat-list > li > button {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--primero);
-            color: whitesmoke;
-            border: none;
-            border-radius: 5px;
-            padding: 0.25rem 0.5rem;
-        }
-
-        #chat-list > li > button:hover {
-            background-color: var(--segundo);
-        }
-
         .selected-chat {
             background-color: var(--septimo);
             color: var(--quinto);
@@ -282,4 +258,3 @@
     </section>
 </body>
 </html>
-
