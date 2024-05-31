@@ -201,9 +201,10 @@
 
         #form {
             display: flex;
-            height: 50px;
+            align-items: center; 
             padding: 5px;
             position: relative;
+            flex-wrap: wrap; 
         }
 
         #form > input, #form > button, #image-label {
@@ -212,6 +213,7 @@
             height: 30px;
         }
 
+        
         #form > button {
             background: var(--primero);
             color: whitesmoke;
@@ -247,6 +249,14 @@
 
         #image-label:hover {
             background-color: var(--segundo);
+        }
+
+        #image-preview {
+            display: none;
+            max-width: 150px;
+            max-height: 150px;
+            margin: 10px 0;
+            order: -1;
         }
 
         .client-message {
@@ -311,8 +321,8 @@
 
         #image-preview {
             display: none;
-            max-width: 300px;
-            max-height: 300px;
+            max-width: 150px;
+            max-height: 150px;
             margin: 10px 0;
         }
 
@@ -334,7 +344,7 @@
             <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
             <label for="image-input" id="image-label">Foto</label>
             <input type="file" id="image-input" accept="image/*">
-            <img id="image-preview" style="display: none; max-width: 100px; max-height: 100px; margin: 10px 0;">
+            <img id="image-preview" style="display: none; max-width: 150px; max-height: 150px; margin: 10px 0;">
             <button type="submit">Enviar</button>
         </form>
     </section>
