@@ -43,6 +43,7 @@
                     </li>`;
                 chatList.insertAdjacentHTML('beforeend', item);
             });
+            highlightCurrentChat();
         });
     
         form.addEventListener('submit', (e) => {
@@ -61,9 +62,11 @@
         });
     
         chatList.addEventListener('click', (e) => {
-            if (e.target.tagName === 'LI') {
-                currentChat = e.target.dataset.chat;
+            if (e.target.tagName === 'LI' || e.target.parentElement.tagName === 'LI') {
+                const chatElement = e.target.tagName === 'LI' ? e.target : e.target.parentElement;
+                currentChat = chatElement.dataset.chat;
                 socket.emit('join chat', currentChat);
+                highlightCurrentChat();
             } else if (e.target.classList.contains('delete-chat')) {
                 const chatToDelete = e.target.parentElement.dataset.chat;
                 socket.emit('delete chat', chatToDelete);
@@ -80,6 +83,17 @@
         });
     
         socket.emit('join chat', currentChat);
+    
+        function highlightCurrentChat() {
+            const chatItems = chatList.querySelectorAll('li');
+            chatItems.forEach(item => {
+                if (item.dataset.chat === currentChat) {
+                    item.classList.add('selected-chat');
+                } else {
+                    item.classList.remove('selected-chat');
+                }
+            });
+        }
     </script>
     
     <style>
@@ -196,6 +210,10 @@
             position: relative;
         }
 
+        #chat-list > li:hover {
+            background-color: var(--septimo);
+        }
+
         #chat-list > li > button {
             position: absolute;
             right: 10px;
@@ -210,6 +228,11 @@
 
         #chat-list > li > button:hover {
             background-color: var(--segundo);
+        }
+
+        .selected-chat {
+            background-color: var(--septimo);
+            color: var(--quinto);
         }
 
         #new-chat-form {
@@ -259,3 +282,4 @@
     </section>
 </body>
 </html>
+
