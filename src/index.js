@@ -28,14 +28,22 @@ const messageSchema = new mongoose.Schema({
     chat: String
 });
 
+const chatSchema = new mongoose.Schema({
+    name: String
+});
+
 const Message = mongoose.model('Message', messageSchema);
+const Chat = mongoose.model('Chat', chatSchema);
 
-let chats = ['General', 'Juegos', 'Trabajo'];
-
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log('Se ha conectado un usuario.');
 
-    socket.emit('update chats', chats);
+    try {
+        const chats = await Chat.find().exec();
+        socket.emit('update chats', chats.map(chat => chat.name));
+    } catch (error) {
+        console.error('Error al recuperar chats de la base de datos:', error);
+    }
 
     socket.on('join chat', async (chat) => {
         socket.join(chat);
@@ -65,10 +73,25 @@ io.on('connection', (socket) => {
         socket.to(chat).emit('chat message', { text, username });
     });
 
-    socket.on('new chat', (newChat) => {
-        if (!chats.includes(newChat)) {
-            chats.push(newChat);
-            io.emit('update chats', chats);
+    socket.on('new chat', async (newChat) => {
+        try {
+            const chat = new Chat({ name: newChat });
+            await chat.save();
+            const chats = await Chat.find().exec();
+            io.emit('update chats', chats.map(chat => chat.name));
+        } catch (error) {
+            console.error('Error al crear nuevo chat en la base de datos:', error);
+        }
+    });
+
+    socket.on('delete chat', async (chatToDelete) => {
+        try {
+            await Chat.deleteOne({ name: chatToDelete });
+            await Message.deleteMany({ chat: chatToDelete });
+            const chats = await Chat.find().exec();
+            io.emit('update chats', chats.map(chat => chat.name));
+        } catch (error) {
+            console.error('Error al eliminar chat de la base de datos:', error);
         }
     });
 });
