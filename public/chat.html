@@ -29,7 +29,7 @@
                 item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
             }
             messages.insertAdjacentHTML('beforeend', item);
-            scrollToBottom(); // Desplaza hacia abajo después de recibir un nuevo mensaje
+            scrollToBottom();
         });
     
         socket.on('chat history', (msgs) => {
@@ -43,7 +43,7 @@
                 }
                 messages.insertAdjacentHTML('beforeend', item);
             });
-            scrollToBottom(); // Desplaza hacia abajo después de cargar el historial del chat
+            scrollToBottom(); 
         });
     
         socket.on('update chats', (chats) => {
@@ -67,7 +67,7 @@
                 const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
                 messages.insertAdjacentHTML('beforeend', item);
                 input.value = '';
-                scrollToBottom(); // Desplaza hacia abajo después de enviar un nuevo mensaje
+                scrollToBottom(); 
             } else if (imageInput.files.length > 0) {
                 const file = imageInput.files[0];
                 const reader = new FileReader();
@@ -81,7 +81,7 @@
                     const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
                     messages.insertAdjacentHTML('beforeend', item);
                     imageInput.value = '';
-                    scrollToBottom(); // Desplaza hacia abajo después de enviar una imagen
+                    scrollToBottom(); 
                 };
                 reader.readAsDataURL(file);
             }
