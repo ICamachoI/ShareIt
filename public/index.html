@@ -45,13 +45,14 @@
             border-radius: 10px;
         }
 
-        #login-form {
+        #login-form, #register-form {
             display: flex;
             flex-direction: column;
             width: 300px;
+            margin-bottom: 20px;
         }
 
-        #login-form > input {
+        #login-form > input, #register-form > input {
             margin-bottom: 10px;
             padding: 10px;
             font-size: 16px;
@@ -59,7 +60,7 @@
             border: none;
         }
 
-        #login-form > button {
+        #login-form > button, #register-form > button {
             padding: 10px;
             font-size: 16px;
             background-color: var(--primero);
@@ -69,10 +70,23 @@
             border-radius: 5px;
         }
 
-        #login-form > button:hover {
+        #login-form > button:hover, #register-form > button:hover {
             background-color: var(--segundo);
         }
-        
+
+        #forms {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #separator {
+            width: 100%;
+            height: 1px;
+            background-color: var(--quinto);
+            margin: 20px 0;
+        }
+
   </style>
 </head>
 <body>
@@ -86,7 +100,7 @@
 
       <form id="register-form">
         
-        <h2>Crear cuenta</h2>
+        <h2>Registrar</h2>
 
         <input type="text" id="register-username" placeholder="Nombre de Usuario" required>
 
@@ -96,9 +110,11 @@
 
       </form>
 
+      <div id="separator"></div>
+
       <form id="login-form">
 
-        <h2>Iniciar Sesion</h2>
+        <h2>Iniciar Sesi&oacute;n</h2>
 
         <input type="text" id="login-username" placeholder="Nombre de Usuario" required>
 
