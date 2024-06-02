@@ -5,7 +5,9 @@ import { createServer } from 'http';
 import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
+import bcrypt from 'bcrypt';
 import fs from 'fs';
+import { error } from 'console';
 
 const port = process.env.PORT ?? 4269;
 const app = express();
@@ -25,6 +27,11 @@ db.once('open', () => {
     console.log('Conectado a la base de datos MongoDB');
 });
 
+const userSchema = new mongoose.Schema({
+    username: {type: String, unique: true},
+    password: String
+});
+
 const messageSchema = new mongoose.Schema({
     text: String,
     username: String,
@@ -36,6 +43,7 @@ const chatSchema = new mongoose.Schema({
     name: String
 });
 
+const User = mongoose.model('User', userSchema);
 const Message = mongoose.model('Message', messageSchema);
 const Chat = mongoose.model('Chat', chatSchema);
 
@@ -102,6 +110,7 @@ io.on('connection', async (socket) => {
 });
 
 app.use(logger('dev'));
+app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
@@ -111,6 +120,52 @@ app.post('/upload', upload.single('image'), (req, res) => {
     } else {
         res.status(400).json({ error: 'No file uploaded' });
     }
+});
+
+app.post('/register', async (req, res) => {
+
+    const { username, password } = req.body;
+
+    try {
+        const existingUser = await User.findOne({ username });
+
+        if (existingUser) {
+            return res.json({ success: false, error: 'El nombre de usuario ya existe.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ username, password: hashedPassword });
+
+        await newUser.save();
+
+        res.json({ success: true });
+    } catch (error) {
+        res.json({ success: false, error: error.message });
+    }
+
+});
+
+app.post('/login', async (req, res) => {
+
+    const { username, password } = req.body;
+
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.json({ success: false, error: 'Nombre de usuario o contrase&ntilde incorrectos.'});
+        }
+
+        const validPassword = await bcrypt.compare(password, user.password);
+
+        if (!validPassword) {
+            return res.json({ success: false, error: 'Nombre de usuario o contrase&ntilde incorrectos.'});
+        }
+        res.json({ success: true });
+    } catch (error) {
+        res.json({ success: false, error: error.message});
+    }
+    
 });
 
 app.get('/', (req, res) => {
