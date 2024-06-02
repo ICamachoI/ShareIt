@@ -13,38 +13,44 @@
         if (!username) {
             window.location.href = '/';
         }
+
         const form = document.getElementById('form');
         const input = document.getElementById('input');
         const messages = document.getElementById('messages');
-        const chatList = document.getElementById('chat-list');
-        const newChatForm = document.getElementById('new-chat-form');
-        const newChatInput = document.getElementById('new-chat-input');
-        const imageInput = document.getElementById('image-input');
-        const imagePreview = document.getElementById('image-preview');
-    
-        socket.on('chat message', (msg) => {
-            let item;
-            if (msg.image) {
-                item = `<li class="server-message"><strong>${msg.username}</strong>: <img src="${msg.image}" alt="Image"></li>`;
-            } else {
-                item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
-            }
-            messages.insertAdjacentHTML('beforeend', item);
-            scrollToBottom();
-        });
-    
-        socket.on('chat history', (msgs) => {
-            messages.innerHTML = '';
-            msgs.forEach(msg => {
-                let item;
-                if (msg.image) {
-                    item = `<li class="server-message"><strong>${msg.username}</strong>: <img src="${msg.image}" alt="Image"></li>`;
-                } else {
-                    item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
-                }
+        const actualUsername = 'usuarioActual'; // Debes establecer esto dinámicamente según el usuario actual
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value) {
+                const msg = {
+                    text: input.value,
+                    username,
+                    chat: currentChat
+                };
+                socket.emit('chat message', msg);
+                const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
                 messages.insertAdjacentHTML('beforeend', item);
-            });
-            scrollToBottom(); 
+                input.value = '';
+                imagePreview.style.display = 'none';
+                scrollToBottom(); 
+            } else if (imageInput.files.length > 0) {
+                const file = imageInput.files[0];
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const msg = {
+                        image: reader.result,
+                        username,
+                        chat: currentChat
+                    };
+                    socket.emit('chat message', msg);
+                    const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
+                    messages.insertAdjacentHTML('beforeend', item);
+                    imageInput.value = '';
+                    imagePreview.style.display = 'none';
+                    scrollToBottom(); 
+                };
+                reader.readAsDataURL(file);
+            }
         });
     
         socket.on('update chats', (chats) => {

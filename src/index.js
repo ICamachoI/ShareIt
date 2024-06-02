@@ -93,7 +93,7 @@ io.on('connection', async (socket) => {
 
         console.log("Mensaje guardado en la base de datos");
 
-        socket.to(chat).emit('chat message', { text, username, image });
+        io.in(chat).emit('chat message', { text, username, image });
     });
 
     socket.on('new chat', async (newChat) => {
@@ -106,7 +106,6 @@ io.on('connection', async (socket) => {
             console.error('Error al crear nuevo chat en la base de datos:', error);
         }
     });
-
 });
 
 app.use(logger('dev'));
