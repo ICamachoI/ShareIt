@@ -153,13 +153,13 @@ app.post('/login', async (req, res) => {
         const user = await User.findOne({ username });
 
         if (!user) {
-            return res.json({ success: false, error: 'Nombre de usuario o contrase&ntilde incorrectos.'});
+            return res.json({ success: false, error: 'Nombre de usuario o contraseña incorrectos.'});
         }
 
         const validPassword = await bcrypt.compare(password, user.password);
 
         if (!validPassword) {
-            return res.json({ success: false, error: 'Nombre de usuario o contrase&ntilde incorrectos.'});
+            return res.json({ success: false, error: 'Nombre de usuario o contraseña incorrectos.'});
         }
         res.json({ success: true });
     } catch (error) {

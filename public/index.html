@@ -160,9 +160,9 @@
 
         e.preventDefault();
 
-        const username = document.getElementById('register-username').value.trim();
-        const password = document.getElementById('register-password').value.trim();
-        const response = await fetch('/register', {
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        const response = await fetch('/login', {
 
           method: 'POST',
           headers: {
@@ -173,7 +173,7 @@
         });
 
         const result = await response.json();
-        
+
         if (result.success) {
           localStorage.setItem('username', username);
           window.location.href = '/chat.html';
