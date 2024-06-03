@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt';
 import fs from 'fs';
 import { error } from 'console';
 
+
 const port = process.env.PORT ?? 4269;
 const app = express();
 const server = createServer(app);
@@ -122,7 +123,6 @@ app.post('/upload', upload.single('image'), (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-
     const { username, password } = req.body;
 
     try {
@@ -141,11 +141,9 @@ app.post('/register', async (req, res) => {
     } catch (error) {
         res.json({ success: false, error: error.message });
     }
-
 });
 
 app.post('/login', async (req, res) => {
-
     const { username, password } = req.body;
 
     try {
@@ -164,7 +162,6 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         res.json({ success: false, error: error.message});
     }
-    
 });
 
 app.get('/', (req, res) => {

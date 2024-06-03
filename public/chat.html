@@ -17,7 +17,11 @@
         const form = document.getElementById('form');
         const input = document.getElementById('input');
         const messages = document.getElementById('messages');
-        const actualUsername = 'usuarioActual'; 
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+        const chatList = document.getElementById('chat-list');
+        const newChatForm = document.getElementById('new-chat-form');
+        const newChatInput = document.getElementById('new-chat-input');
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -61,41 +65,23 @@
             });
             highlightCurrentChat();
         });
-    
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (input.value) {
-                const msg = {
-                    text: input.value,
-                    username,
-                    chat: currentChat
-                };
-                socket.emit('chat message', msg);
-                const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
+
+        socket.on('chat history', (msgs) => {
+            messages.innerHTML = '';
+            msgs.forEach(({ text, username, image }) => {
+                const item = `<li class="server-message"><strong>${username}</strong>: ${text || ''}${image ? `<img src="${image}" alt="Image">` : ''}</li>`;
                 messages.insertAdjacentHTML('beforeend', item);
-                input.value = '';
-                imagePreview.style.display = 'none';
-                scrollToBottom(); 
-            } else if (imageInput.files.length > 0) {
-                const file = imageInput.files[0];
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const msg = {
-                        image: reader.result,
-                        username,
-                        chat: currentChat
-                    };
-                    socket.emit('chat message', msg);
-                    const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
-                    messages.insertAdjacentHTML('beforeend', item);
-                    imageInput.value = '';
-                    imagePreview.style.display = 'none';
-                    scrollToBottom(); 
-                };
-                reader.readAsDataURL(file);
-            }
+            });
+            scrollToBottom();
         });
-    
+
+        socket.on('chat message', ({ text, username, image }) => {
+            const item = `<li class="server-message"><strong>${username}</strong>: ${text || ''}${image ? `<img src="${image}" alt="Image">` : ''}</li>`;
+                messages.insertAdjacentHTML('beforeend', item);
+                scrollToBottom();
+        });
+
+
         imageInput.addEventListener('change', () => {
             const file = imageInput.files[0];
             if (file) {
@@ -109,7 +95,6 @@
                 imagePreview.style.display = 'none';
             }
         });
-
     
         chatList.addEventListener('click', (e) => {
             if (e.target.tagName === 'LI') {
