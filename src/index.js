@@ -6,8 +6,6 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
-import { error } from 'console';
 
 const port = process.env.PORT ?? 4269;
 const app = express();
