@@ -9,7 +9,6 @@ import bcrypt from 'bcrypt';
 import fs from 'fs';
 import { error } from 'console';
 
-
 const port = process.env.PORT ?? 4269;
 const app = express();
 const server = createServer(app);
@@ -94,7 +93,7 @@ io.on('connection', async (socket) => {
 
         console.log("Mensaje guardado en la base de datos");
 
-        io.in(chat).emit('chat message', { text, username, image });
+        socket.to(chat).emit('chat message', { text, username, image });
     });
 
     socket.on('new chat', async (newChat) => {
@@ -107,6 +106,7 @@ io.on('connection', async (socket) => {
             console.error('Error al crear nuevo chat en la base de datos:', error);
         }
     });
+
 });
 
 app.use(logger('dev'));
@@ -123,6 +123,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
+
     const { username, password } = req.body;
 
     try {
@@ -141,9 +142,11 @@ app.post('/register', async (req, res) => {
     } catch (error) {
         res.json({ success: false, error: error.message });
     }
+
 });
 
 app.post('/login', async (req, res) => {
+
     const { username, password } = req.body;
 
     try {
@@ -162,14 +165,15 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         res.json({ success: false, error: error.message});
     }
+    
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(process.cwd() + '/public/index.html');
 });
 
 app.get('/chat.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+    res.sendFile(process.cwd() + '/public/chat.html');
 });
 
 server.listen(port, () => {
