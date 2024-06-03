@@ -168,11 +168,11 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(process.cwd() + '/public/index.html');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/chat.html', (req, res) => {
-    res.sendFile(process.cwd() + '/public/chat.html');
+    res.sendFile(path.join(__dirname, 'public', 'chat.html'));
 });
 
 server.listen(port, () => {
