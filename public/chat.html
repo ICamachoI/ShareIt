@@ -5,14 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShareIt</title>
     <script type="module">
+
+        //Importa la funcion "io" - Imports the fucntion "io"
         import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js';
-    
+
+        //Inicia la conexion con el socket - Starts the connection with the socket
         const socket = io();
+
+        //Establce el chat actual en "general" - Establish the current chat to "general" 
         let currentChat = 'general';
+
+        //Obtiene el nombre de usuario - Gets the username
         const username = localStorage.getItem('username');
+
+        //Redirige al index si no hay un nombre de usuario - Redirects to the index if there is no username
         if (!username) {
             window.location.href = '/';
         }
+
+        //Obtiene los siguientes elementos - Gets the following elements
         const form = document.getElementById('form');
         const input = document.getElementById('input');
         const messages = document.getElementById('messages');
@@ -22,119 +33,219 @@
         const imageInput = document.getElementById('image-input');
         const imagePreview = document.getElementById('image-preview');
     
+        //Escucha los mensajes del chat - Listens to the messages of the chat
         socket.on('chat message', (msg) => {
+
             let item;
+
+            //Crea un elemento <li> para el mensaje - Creates a <li> element for the message
             if (msg.image) {
+
+                //Si es una imagen - If it is an image
                 item = `<li class="server-message"><strong>${msg.username}</strong>: <img src="${msg.image}" alt="Image"></li>`;
             } else {
+
+                //Si es un texto - If it is a text
                 item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
             }
+
+            //Agrega los elementos al final de la lista - Adds the elements at the end of the list
             messages.insertAdjacentHTML('beforeend', item);
+
+            //Muestra el fondo de la lista de mensajes - Shows the bottom of the messages list
             scrollToBottom();
         });
     
+        //Escucha el historial del chat - Listens to the history of the chat
         socket.on('chat history', (msgs) => {
+
             messages.innerHTML = '';
+
             msgs.forEach(msg => {
+
                 let item;
+
+                //Crea un elemento <li> para el mensaje - Creates a <li> element for the message
                 if (msg.image) {
+
+                    //Si es una imagen - If it is an image
                     item = `<li class="server-message"><strong>${msg.username}</strong>: <img src="${msg.image}" alt="Image"></li>`;
                 } else {
+
+                    //Si es un texto - If it is a text
                     item = `<li class="server-message"><strong>${msg.username}</strong>: ${msg.text}</li>`;
                 }
+
+                //Agrega los elementos al final de la lista - Adds the elements at the end of the list
                 messages.insertAdjacentHTML('beforeend', item);
             });
+
+            //Muestra el fondo de la lista de mensajes - Shows the bottom of the messages list
             scrollToBottom(); 
         });
     
+        //Escucha las actualizaciones en el chat
         socket.on('update chats', (chats) => {
+
             chatList.innerHTML = '';
+
+            //Crea un elemento <li> para cada mensaje en la lista - Creates a <li> element for each message on the list
             chats.forEach(chat => {
+
                 const item = `<li data-chat="${chat}">${chat}</li>`;
+
+                //Inserta cada elemento al final de la lista - Inserts each element at the end of the list
                 chatList.insertAdjacentHTML('beforeend', item);
+
             });
-            highlightCurrentChat();
+
         });
     
+        //Escucha cuando se este enviando un mensaje - Listens to when a message is being sent
         form.addEventListener('submit', (e) => {
+
+            //Evita que la pagina vuelva a cargar - Prevents the page from refreshing
             e.preventDefault();
+
+            //Crea un objeto que tenga el mensaje, nombre de usuario y el chat - Creates and item that contains the message, username and chat
             if (input.value) {
+
                 const msg = {
                     text: input.value,
                     username,
                     chat: currentChat
                 };
+
+                //Emite el mensaje a traves del socket - Emits the message through the socket
                 socket.emit('chat message', msg);
+
+                //Crea un elemento <li> para el mensaje - Creates a <li> element for the message
                 const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
+
+                //Agrega los elementos al final de la lista - Adds the elements at the end of the list
                 messages.insertAdjacentHTML('beforeend', item);
+
+                //Reinicia el valor del input - Resets the value of the input
                 input.value = '';
+
+                //Hace desaparecer el preview de la imagen - Makes the image preview desapear
                 imagePreview.style.display = 'none';
-                scrollToBottom(); 
+
+                //Muestra el fondo de la lista de mensajes - Shows the bottom of the messages list
+                scrollToBottom();
+
+            //Crea un objeto para la imagen - Creates an object for the image
             } else if (imageInput.files.length > 0) {
+
                 const file = imageInput.files[0];
+
+                //Permite leer el archivo seleccionado - Allow to read the selected file
                 const reader = new FileReader();
+
+                //Crea un objeto que tenga la imagen, nombre de usuario y el chat - Creates and item that contains the image, username and chat
                 reader.onload = () => {
+
                     const msg = {
                         image: reader.result,
                         username,
                         chat: currentChat
                     };
+
+                    //Emite el mensaje a traves del socket - Emits the message through the socket
                     socket.emit('chat message', msg);
+
+                    //Crea un elemento <li> para el mensaje - Creates a <li> element for the message
                     const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
+
+                    //Agrega los elementos al final de la lista - Adds the elements at the end of the list
                     messages.insertAdjacentHTML('beforeend', item);
+
+                    //Reinicia el valor del input - Resets the value of the input
                     imageInput.value = '';
+
+                    //Hace desaparecer el preview de la imagen - Makes the image preview desapear
                     imagePreview.style.display = 'none';
+
+                    //Muestra el fondo de la lista de mensajes - Shows the bottom of the messages list
                     scrollToBottom(); 
+
                 };
+
+                //Lee la imagen como un URL - Reads the image as an URL
                 reader.readAsDataURL(file);
             }
         });
     
+        //Escucha cuando un usuario selecciona un archivo - Listens to when the user selects a file 
         imageInput.addEventListener('change', () => {
+
+            //Crea una variable para el archivo seleccionado - Creates a variable for the selected file
             const file = imageInput.files[0];
+
+            //Comprueba si el archivo es una imagen y en caso de serlo la muestra en el preview - Checks if the file is an image and if it is show it in the preview
             if (file) {
+
+                //Permite leer el archivo seleccionado - Allow to read the selected file
                 const reader = new FileReader();
+
                 reader.onload = () => {
                     imagePreview.src = reader.result;
                     imagePreview.style.display = 'block';
                 };
+                
+                //Lee la imagen como un URL - Reads the image as an URL
                 reader.readAsDataURL(file);
             } else {
+
+                //Hace desaparecer el preview de la imagen - Makes the image preview desapear
                 imagePreview.style.display = 'none';
             }
+
         });
     
+        //Escucha cuando haces click en la lista de los chats - Listens for when you click in the chat list
         chatList.addEventListener('click', (e) => {
+
+            //Comprueba si donde haces click es un <li> - Checks if where you click is a <li>
             if (e.target.tagName === 'LI') {
+
+                //Identifica que elemento <li> clickeaste - Identifies wich <li> element you clicked
                 currentChat = e.target.dataset.chat;
+
+                //Avisa al servidor que se ha conectado un usuario - Notifies the server that a user has connected
                 socket.emit('join chat', currentChat);
-                highlightCurrentChat();
+                
             }
+
         });
     
+        //Escucha cuando seleccionas un nombre para el nuevo chat - Listens to when you select a name for the new chat
         newChatForm.addEventListener('submit', (e) => {
+
+            //Evita que la pagina vuelva a cargar - Prevents the page from refreshing
             e.preventDefault();
+
+            //Elimina los espacios al principio y al final del nombre - Deletes the spaces at the end and start of the name
             const newChat = newChatInput.value.trim();
+
+            //Revisa si se ha agregado un nuevo nombre de chat - Checks if a new name chat was added
             if (newChat) {
+
+                //Envia el nuevo nombre al servidor y a los usuarios - Sends the new name to the server and users
                 socket.emit('new chat', newChat);
+
+                //Reinicia el valor del input - Resets the value of the input
                 newChatInput.value = '';
             }
+
         });
     
+        //Hace que el usuario se una al chat "general" - Makes the user join the "general" chat
         socket.emit('join chat', currentChat);
     
-        function highlightCurrentChat() {
-            const chatItems = chatList.querySelectorAll('li');
-            chatItems.forEach(item => {
-                if (item.dataset.chat === currentChat) {
-                    item.classList.add('selected-chat');
-                } else {
-                    item.classList.remove('selected-chat');
-                }
-            });
-        }
-    
+        //Muestra el fondo de la lista de mensajes - Shows the bottom of the messages list
         function scrollToBottom() {
+
             messages.scrollTop = messages.scrollHeight;
         }
     </script>        
@@ -331,24 +442,52 @@
     </style>
 
 </head>
+
 <body>
+
+    <!--Seccion de los chats - Section for the chats-->
     <section id="users">
+
+        <!--Lista de chats - List of chats-->
         <ul id="chat-list"></ul>
+
+        <!--Formulario para crear un nuevo chat - Form to create a new chat-->
         <form id="new-chat-form">
+
+            <!--Barra de entrada del nombre del chat - Input bar for the name of the chat-->
             <input type="text" id="new-chat-input" placeholder="Nuevo chat" autocomplete="off">
+
+            <!--Boton para crear el nuevo chat - Button to create the new chat-->
             <button type="submit">Crear</button>
+
         </form>
+
     </section>
     
+    <!--Seccion del chat actual - Section for the current chat-->
     <section id="chat">
+
+        <!--Lista de mensajes - Messages list-->
         <ul id="messages"></ul>
+
+        <!--Formulario para enviar mensajes - Form to send the messages-->
         <form id="form">
-            <input type="text" name="message" id="input" placeholder="Type a message" autocomplete="off">
+
+            <!--Barra de entrada del mensaje - Input bar for the messages-->
+            <input type="text" name="message" id="input" placeholder="Escribe un mensaje" autocomplete="off">
+
+            <!--Boton para seleccionar una foto - Button to select a photo-->
             <label for="image-input" id="image-label">Foto</label>
             <input type="file" id="image-input" accept="image/*">
+
+            <!--Preview de la foto - Preview of the photo-->
             <img id="image-preview" style="display: none; max-width: 150px; max-height: 150px; margin: 10px 0;">
+
+            <!--Boton de enviar - Send button-->
             <button type="submit">Enviar</button>
+
         </form>
+
     </section>
     
 </body>
