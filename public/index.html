@@ -92,51 +92,37 @@
 </head>
 
 <body>
-  <!--Contenedor de los elementos del inicio - Container for the initial elements-->
+
   <div id="container">
 
-    <!--Logo del sitio - Logo of the site-->
     <img src="img/ShareIt-Logo.png" alt="Logo" id="logo">
 
-    <!--Titulo de bienvenida al sitio - Welcome title to the site-->
     <h1 id="title">Bienvenido a ShareIt</h1>
 
-    <!--Contenedor de los formularios - Container for the forms-->
     <div id="forms">
 
-      <!--Formulario de registro - Register form-->
       <form id="register-form">
         
-        <!--Titulo de registrar - Register title-->
         <h2>Registrar</h2>
 
-        <!--Barra de entrada del nombre de usuario - Input bar for the username-->
         <input type="text" id="register-username" placeholder="Nombre de Usuario" required>
 
-        <!-- Barra de entrada de la contrasena - Input bar for the password-->
         <input type="password" id="register-password" placeholder="Contrase&ntilde;a" required>
 
-        <!--Boton para registrar el usuario - Button to register the user-->
         <button type="submit">Registrar</button>
 
       </form>
 
-      <!--Linea que separa los formularios - Line that separates the forms-->
       <div id="separator"></div>
 
-      <!--Formulario de inicio de sesion - Login form-->
       <form id="login-form">
 
-        <!--Titulo de inicio de sesion - Login title-->
         <h2>Iniciar Sesi&oacute;n</h2>
 
-        <!--Barra de entrada del nombre de usuario - Input bar for the username-->
         <input type="text" id="login-username" placeholder="Nombre de Usuario" required>
 
-        <!-- Barra de entrada de la contrasena - Input bar for the password-->
         <input type="password" id="login-password" placeholder="Contrase&ntilde;a" required>
 
-        <!--Boton para iniciar sesion - Button to log in-->
         <button type="submit">Inciar Sesi&oacute;n</button>
 
       </form>
@@ -147,18 +133,13 @@
 
     <script>
 
-      //Escucha al evento submit del formulario de registro - Listens to the submit event for the register form
       document.getElementById('register-form').addEventListener('submit', async (e) => {
 
-        //Evita que la pagina vuelva a cargar - Prevents the page from refreshing
         e.preventDefault();
 
-        //Elimina los espacios al principio y al final del nombre - Deletes the spaces at the end and start of the name
         const username = document.getElementById('register-username').value.trim();
-        //Elimina los espacios al principio y al final de la contrasena - Deletes the spaces at the end and start of the password
         const password = document.getElementById('register-password').value.trim();
 
-        //Envia una solicitud POST a register - Sends a POST request to register
         const response = await fetch('/register', {
 
           method: 'POST',
@@ -169,10 +150,8 @@
           body: JSON.stringify({username, password})
         });
 
-        //Espera la respuesta del servidor - Waits for the response of the server
         const result = await response.json();
 
-        //Alerta al usuario de que se ha creado su cuenta - Alerts the user that his account has been created
         if (result.success) {
           alert('Cuenta creada exitosamente. Ahora puedes iniciar sesi&oacute;n');
         } else {
@@ -181,18 +160,13 @@
 
       });
 
-      //Escucha al evento submit del formulario de inicio de sesion - Listens to the submit event for the login form
       document.getElementById('login-form').addEventListener('submit', async (e) => {
 
-        //Evita que la pagina vuelva a cargar - Prevents the page from refreshing
         e.preventDefault();
 
-        //Elimina los espacios al principio y al final del nombre - Deletes the spaces at the end and start of the name
         const username = document.getElementById('login-username').value.trim();
-        //Elimina los espacios al principio y al final de la contrasena - Deletes the spaces at the end and start of the password
         const password = document.getElementById('login-password').value.trim();
 
-        //Envia una solicitud POST a login - Sends a POST request to login
         const response = await fetch('/login', {
 
           method: 'POST',
@@ -203,10 +177,8 @@
           body: JSON.stringify({username, password})
         });
 
-        //Espera la respuesta del servidor - Waits for the response of the server
         const result = await response.json();
 
-        //Establece el nombre del usuario y lo manda a la pagina del chat - Sets the username of the user and sends it to the chat page
         if (result.success) {
           localStorage.setItem('username', username);
           window.location.href = '/chat.html';
