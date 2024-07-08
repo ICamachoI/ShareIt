@@ -37,7 +37,9 @@ const messageSchema = new mongoose.Schema({
     text: String,
     username: String,
     chat: String,
-    image: String 
+    image: String,
+    file: String,
+    fileName: String
 });
 const chatSchema = new mongoose.Schema({
     name: String
@@ -88,15 +90,15 @@ io.on('connection', async (socket) => {
         console.log('Se ha desconectado un usuario.');
     });
 
-    socket.on('chat message', async ({ text, username, chat, image }) => {
+    socket.on('chat message', async ({ text, username, chat, image, file, fileName }) => {
         console.log('chat message ' + text);
 
-        const message = new Message({ text, username, chat, image });
+        const message = new Message({ text, username, chat, image, file, fileName });
         await message.save();
 
         console.log("Mensaje guardado en la base de datos");
 
-        socket.to(chat).emit('chat message', { text, username, image });
+        socket.to(chat).emit('chat message', { text, username, image, file, fileName });
     });
 
     socket.on('new chat', async (newChat) => {

@@ -24,8 +24,8 @@
         const chatList = document.getElementById('chat-list');
         const newChatForm = document.getElementById('new-chat-form');
         const newChatInput = document.getElementById('new-chat-input');
-        const imageInput = document.getElementById('image-input');
-        const imagePreview = document.getElementById('image-preview');
+        const fileInput = document.getElementById('file-input');
+        const filePreview = document.getElementById('file-preview');
     
         socket.on('chat message', (msg) => {
 
@@ -94,68 +94,61 @@
 
                 socket.emit('chat message', msg);
 
-
                 const item = `<li class="client-message"><strong>${username}</strong>: ${input.value}</li>`;
 
                 messages.insertAdjacentHTML('beforeend', item);
 
                 input.value = '';
-
-                imagePreview.style.display = 'none';
+                filePreview.style.display = 'none';
 
                 scrollToBottom();
-
-            } else if (imageInput.files.length > 0) {
-
-                const file = imageInput.files[0];
-
+            } else if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
 
                 reader.onload = () => {
 
                     const msg = {
-                        image: reader.result,
+                        file: reader.result,
+                        fileName: file.name,
                         username,
                         chat: currentChat
                     };
 
                     socket.emit('chat message', msg);
 
-                    const item = `<li class="client-message"><strong>${username}</strong>: <img src="${reader.result}" alt="Image"></li>`;
-
+                    const item = `<li class="client-message"><strong>${username}</strong>: <a href="${reader.result}" download="${file.name}">${file.name}</a></li>`;
                     messages.insertAdjacentHTML('beforeend', item);
 
-                    imageInput.value = '';
+                    fileInput.value = '';
+                    filePreview.style.display = 'none';
 
-                    imagePreview.style.display = 'none';
-
-                    scrollToBottom(); 
+                    scrollToBottom();
 
                 };
 
                 reader.readAsDataURL(file);
             }
+
         });
     
-        imageInput.addEventListener('change', () => {
-
-            const file = imageInput.files[0];
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
 
             if (file) {
-
-                const reader = new FileReader();
-
-                reader.onload = () => {
-                    imagePreview.src = reader.result;
-                    imagePreview.style.display = 'block';
-                };
-                
-                reader.readAsDataURL(file);
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        filePreview.src = reader.result;
+                        filePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    filePreview.style.display = 'none';
+                }
             } else {
-
-                imagePreview.style.display = 'none';
+                filePreview.style.display = 'none';
             }
-
         });
     
         chatList.addEventListener('click', (e) => {
@@ -289,24 +282,26 @@
             outline: 0;
         }
 
-        #image-input {
+        #file-input {
             display: none;
+            border-radius: 5px;
         }
 
-        #image-label {
+        #file-label {
             background-color: var(--primero);
             color: whitesmoke;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
+            border-radius: 5px;
         }
 
-        #image-label:hover {
+        #file-label:hover {
             background-color: var(--segundo);
             color: black;
         }
 
-        #image-preview {
+        #file-preview {
             display: none;
             max-width: 150px;
             max-height: 150px;
@@ -409,10 +404,10 @@
 
             <input type="text" name="message" id="input" placeholder="Escribe un mensaje" autocomplete="off">
 
-            <label for="image-input" id="image-label">Foto</label>
-            <input type="file" id="image-input" accept="image/*">
+            <label for="file-input" id="file-label">Archivo</label>
+            <input type="file" id="file-input" accept="*/*">
 
-            <img id="image-preview" style="display: none; max-width: 150px; max-height: 150px; margin: 10px 0;">
+            <img id="file-preview" style="display: none; max-width: 150px; max-height: 150px; margin: 10px 0;">
 
             <button type="submit">Enviar</button>
 
